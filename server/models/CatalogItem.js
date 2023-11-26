@@ -6,7 +6,8 @@ const catalogSchema = new Schema({
   price: { type: Number, default: 0, required: true },
   description: { type: String, default: '', required: true },
   imageURL: { type: String, default: '', required: true },
-  category: { type: String, default: '', required: true }
+  category: { type: String, default: '', required: true },
+  quantity: { type: Number, default: 0, required: true }
 });
 
-mongoose.model('CatalogItem', catalogSchema);
+module.exports = mongoose.model('CatalogItem', catalogSchema);

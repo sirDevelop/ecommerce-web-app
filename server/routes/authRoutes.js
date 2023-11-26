@@ -1,33 +1,5 @@
-// const passport = require('passport');
-
-// module.exports = app => {
-//   app.get(
-//     '/google',
-//     passport.authenticate('google', {
-//       scope: ['profile', 'email']
-//     })
-//   );
-
-//   app.get(
-//     '/google/callback',
-//     passport.authenticate('google'),
-//     (req, res) => {
-//       res.redirect('/surveys');
-//     }
-//   );
-
-//   app.get('/api/logout', (req, res) => {
-//     req.logout();
-//     res.redirect('/');
-//   });
-
-//   app.get('/api/current_user', (req, res) => {
-//     res.send(req.user);
-//   });
-// };
-
-
-const router = require("express").Router();
+const express = require('express')
+const router = express.Router()
 const passport = require("passport");
 
 // verify user logged in
@@ -62,7 +34,10 @@ router.get(
 
 router.get("/logout", (req, res) => {
 	req.logout();
-	res.redirect("http://localhost:3000");
+	res.status(200).json({
+		error: false,
+		message: "Successfully Loged Out"
+	});
 });
 
 

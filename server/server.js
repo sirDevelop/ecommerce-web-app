@@ -60,6 +60,7 @@ server.once('close', function () {
 	app.use(express.urlencoded({ extended: false }))
 
 	app.use("/api/catalog", require('./routes/catalogRoutes'))
+	app.use("/api/orders", require('./routes/orderRoutes'))
 	// app.use("/api/users", require('./routes/userRoutes'))
 	// app.use("/api/menuOptions", require('./routes/menuOptionRoutes'))
 	app.use("/auth", authRoute);
