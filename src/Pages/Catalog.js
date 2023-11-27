@@ -105,6 +105,7 @@ const Catalog = () => {
 																					quantity,
 																					title: val.itemName,
 																					price: val.price,
+																					category: val.category,
 																				},
 																			])
 																		} else {
@@ -119,8 +120,9 @@ const Catalog = () => {
 																							return {
 																								id: val._id,
 																								quantity,
-																								title: val.title,
+																								title: val.itemName,
 																								price: val.price,
+																								category: val.category,
 																							}
 																						else
 																							return cartVal
@@ -128,7 +130,6 @@ const Catalog = () => {
 																				),
 																			])
 																		}
-																		console.log(cart);
 																	}}
 																	variant="primary"
 																>Add to Cart</Button></> :

@@ -13,6 +13,7 @@ const AuthProvider = ({ children }) => {
 	})
 	const [user, setUser] = useState(null)
 	const [cart, setCart] = useState([])
+	const [key, setKey] = useState('cart');
 
 	const getUser = async () => {
 		try {
@@ -38,7 +39,7 @@ const AuthProvider = ({ children }) => {
 	}, [])
 
 	return (
-		<AuthContent.Provider value={{ user, setUser, cart, setCart, authApi }}>
+		<AuthContent.Provider value={{ user, setUser, cart, setCart, key, setKey, authApi }}>
 			{children}
 		</AuthContent.Provider>
 	)

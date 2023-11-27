@@ -22,8 +22,7 @@ import { Badge } from "react-bootstrap"
 import { useAuth } from "./AuthProvider"
 
 const Navigation = () => {
-	const { user, setUser, authApi } = useAuth()
-	let cartQuantity = 0
+	const { user, setUser, cart, setCart, key, setKey, authApi } = useAuth()
 	// const pathName = useLocation().pathname
 	// const { cart, setCartOpen, loggedIn, openLogin, loadingLogin, logout } =
 	// 	useGlobals()
@@ -69,10 +68,14 @@ const Navigation = () => {
 										menuVariant="dark"
 									>
 									<NavDropdown.Item as={Link}
-									to="/orders"
-									> Cart <FontAwesomeIcon icon={faCartArrowDown} /><Badge bg="secondary">{cartQuantity}</Badge></NavDropdown.Item>
+									to="/orders" onClick={() => {
+										setKey("cart")
+									}}
+									> Cart <FontAwesomeIcon icon={faCartArrowDown} /><Badge bg="secondary">{cart.length}</Badge></NavDropdown.Item>
 									<NavDropdown.Item as={Link}
-									to="/orders">
+									to="/orders" onClick={() => {
+										setKey("orderHistory")
+									}}>
 										Order History
 									</NavDropdown.Item>
 									<NavDropdown.Divider />
