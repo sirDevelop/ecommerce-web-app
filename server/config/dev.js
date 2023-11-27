@@ -3,6 +3,6 @@ module.exports = {
     googleClientSecret: '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',
     mongoURI: 'mongodb+srv://cwaf17:jYgVAnNeasrph6qf@ecommerce.usa3wre.mongodb.net/',
     cookieKey: 'jlkjfdklajfdajiejijijfdf',
-    stripePublishableKey: 'pk_live_51HBUV3AW5HlZCwZFQsiObBPlPJ0gscyrggoYQB94Z9QOFbcH4haHFWH5hd8HQwL5g82352IxDjKSTHKmoU2TifFR00PbyVVyfs',
-    stripeSecretKey: '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',
+    stripePublishableKey: 'pk_test_51HBUV3AW5HlZCwZFaY4Zt803hHjbe0hDeRURz18Zi2oS0tUT1cVERDqMujZrAAPNIUyUfvHZ5zw5WNnWlpN8QcWj00xnJL0iwQ',
+    stripeSecretKey: 'sk_test_51HBUV3AW5HlZCwZFTUjBh8q9HWf2WTeCeoZ3S4JTfPJ7Jv8OSUZlMw5kQdJrR4gcOIlo3Lky06DtK3aXWrEGe57e00lRFC0Hxa',
   };
