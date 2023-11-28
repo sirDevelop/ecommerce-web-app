@@ -8,35 +8,43 @@ const stripe = require("stripe")(devKeys.stripeSecretKey)
 const checkoutOrder = asyncHandler(async (req, res) => {
     try {
         if (req.user) {
-            // add stripe functionality here
-            // const session = await stripe.checkout.sessions.create({
-            //     payment_method_types: ["card"],
-            //     mode: "payment",
-            //     line_items: [{
-            //         price_data: {
-            //             currency: "usd",
-            //             product_data: {
-            //                 name: catalogItem.itemName,
-            //                 // images: [`https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fpublic-assets.meredithcorp.io%2Ff926647f3c831a8bb7a3024468adfd8f%2F1700772845613image.jpg&q=60&c=sc&orient=true&poi=auto&h=512`],
-            //             },
-            //             unit_amount: parseInt(catalogItem.price) * 100, // give in cents
-            //         },
-            //         quantity: 1,
-            //     }],
-            //     success_url: `http://localhost:3000/payment/success/${order.uniqueCode}/{CHECKOUT_SESSION_ID}`,
-            //     cancel_url: `http://localhost:3000/payment/failed/${order.uniqueCode}/`,
+            if (req.body.cart) {
+                const order = await Order.create({
+                    isOneClick: false,
+                    cart: req.body.cart,
+                    userEmail: req.user.emails[0].value,
+                    uniqueCode: uuid()
+                })
+
+                cart_info = []
+                JSON.parse(req.body.cart).map((item, i) => {
+                    cart_info.push({
+                        price_data: {
+                            currency: "usd",
+                            product_data: { name: item.title },
+                            unit_amount: parseInt(item.price) * 100
+                        },
+                        quantity: item.quantity
+                    });
+                });
+                // console.log(cart_info);
+                const session = await stripe.checkout.sessions.create({
+                    payment_method_types: ["card"],
+                    mode: "payment",
+                    line_items: cart_info,
+                    success_url: `http://localhost:3000/payment/success/${order.uniqueCode}/{CHECKOUT_SESSION_ID}`,
+                    cancel_url: `http://localhost:3000/payment/failed/${order.uniqueCode}/`,
+                })
+                res.status(200).json({ url: session.url })
+                
+            } else {
+                res.status(404)
+                throw new Error("Nothing in cart")
+            }
+
+            // res.status(200).json({
+            //     "Success": true,
             // })
-            // res.status(200).json({ url: session.url })
-
-
-            // await Order.create({
-            //     cart: req.body.cart,
-            //     userEmail: req.user.emails[0].value,
-            // })
-
-            res.status(200).json({
-                "Success": true,
-            })
         } else {
             res.status(402)
             throw new Error("Invalid credentials")
@@ -127,28 +135,28 @@ const verify = asyncHandler(async (req, res) => {
                 if (payment_status.payment_status === "paid") {
                     res.status(200).json({
                         status: payment_status.payment_status
-                    })   
+                    })
                 } else {
                     res.status(402).json({
                         message: "Not paid"
                     })
                     throw new Error("Status is not paid")
                 }
-            }else{
+            } else {
                 res.status(404).json({
                     message: "Not found"
                 })
                 throw new Error("Order not found")
             }
-    }else {
-        res.status(402)
-        throw new Error("Invalid credentials")
-    }
+        } else {
+            res.status(402)
+            throw new Error("Invalid credentials")
+        }
 
-} catch (error) {
-    res.status(422)
-    throw new Error('Something went wrong when verifying order status ' + error)
-}
+    } catch (error) {
+        res.status(422)
+        throw new Error('Something went wrong when verifying order status ' + error)
+    }
 });
 
 

@@ -3,6 +3,7 @@ import About from "./Pages/About"
 import Home from "./Pages/Home"
 import Catalog from "./Pages/Catalog"
 import Orders from "./Pages/Orders"
+import Payment from "./Pages/Payment"
 import Footer from "./Components/Footer"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Container } from "react-bootstrap"
@@ -20,6 +21,8 @@ function App() {
 							<Route path="/about" element={<About />} />
 							<Route path="/catalog" element={<Catalog />} />
 							<Route path="/orders" element={<Orders />} />
+							<Route path="/orders/:tag" element={<Orders />} />
+							<Route path="/payment/:status/:code/:session" element={<Payment />} />
 						</Routes>
 					</Container>
 					<Footer />

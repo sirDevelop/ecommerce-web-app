@@ -5,10 +5,11 @@ import {
 	faSpinner,
 	faUserAlt,
 	faRightFromBracket,
+	faHistory,
 } from "@fortawesome/free-solid-svg-icons"
 import { Link, Navigate, useLocation } from "react-router-dom"
 // import { useGlobals } from "./useGlobals"
-import { MdOutlineAccountCircle } from "react-icons/md";
+import { MdOutlineAccountCircle } from "react-icons/md"
 
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
@@ -22,7 +23,7 @@ import { Badge } from "react-bootstrap"
 import { useAuth } from "./AuthProvider"
 
 const Navigation = () => {
-	const { user, setUser, cart, setCart, key, setKey, authApi } = useAuth()
+	const { user, setUser, cart, setCart, authApi } = useAuth()
 	// const pathName = useLocation().pathname
 	// const { cart, setCartOpen, loggedIn, openLogin, loadingLogin, logout } =
 	// 	useGlobals()
@@ -64,30 +65,68 @@ const Navigation = () => {
 									<NavDropdown
 										data-toggle="dropdown"
 										id="nav-dropdown-dark-example"
-										title={<>{user.name}<MdOutlineAccountCircle className="text-white mx-2" size={42} /></>}
+										className="no-arrow"
+										title={
+											<>
+												{user.name}
+												<MdOutlineAccountCircle
+													className="text-white ms-2"
+													size={42}
+												/>
+											</>
+										}
 										menuVariant="dark"
 									>
-									<NavDropdown.Item as={Link}
-									to="/orders" onClick={() => {
-										setKey("cart")
-									}}
-									> Cart <FontAwesomeIcon icon={faCartArrowDown} /><Badge bg="secondary">{cart.length}</Badge></NavDropdown.Item>
-									<NavDropdown.Item as={Link}
-									to="/orders" onClick={() => {
-										setKey("orderHistory")
-									}}>
-										Order History
-									</NavDropdown.Item>
-									<NavDropdown.Divider />
-									<NavDropdown.Item onClick={() => {
-										authApi
-											.get("logout")
-											.then((response) => {
-												setUser()
-											})
-									}}>
-										Sign out
-									</NavDropdown.Item>
+										<NavDropdown.Item
+											as={Link}
+											to="/orders/cart"
+										>
+											<FontAwesomeIcon
+												className="me-2"
+												icon={faCartArrowDown}
+											/>
+											<span>Cart</span>
+											<Badge
+												bg="primary"
+												pill
+												className="d-flex position-absolute top-0 end-0  mt-3 me-3"
+											>
+												{cart.reduce((prevQuantity, object) => {return prevQuantity + object.quantity}, 0)}
+											</Badge>
+											{/* Cart{" "}
+											<FontAwesomeIcon
+												icon={faCartArrowDown}
+											/>
+											<Badge bg="secondary">
+												{cartQuantity}
+											</Badge> */}
+										</NavDropdown.Item>
+										<NavDropdown.Item
+											as={Link}
+											to="/orders/history"
+										>
+											<FontAwesomeIcon
+												icon={faHistory}
+												className="me-2"
+											/>
+											Order History
+										</NavDropdown.Item>
+										<NavDropdown.Divider />
+										<NavDropdown.Item
+											onClick={() => {
+												authApi
+													.get("auth/logout")
+													.then((response) => {
+														setUser()
+													})
+											}}
+										>
+											<FontAwesomeIcon
+												icon={faRightFromBracket}
+												className="me-2"
+											/>
+											Sign out
+										</NavDropdown.Item>
 									</NavDropdown>
 								</Nav>
 							</>

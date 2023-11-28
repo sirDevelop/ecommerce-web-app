@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react"
+import { useCookies  } from 'react-cookie';
+
 import axios from "axios"
 const AuthContent = createContext()
 
@@ -13,7 +15,7 @@ const AuthProvider = ({ children }) => {
 	})
 	const [user, setUser] = useState(null)
 	const [cart, setCart] = useState([])
-	const [key, setKey] = useState('cart');
+	const [cookies, setCookie, removeCookie] = useCookies(['cart']);
 
 	const getUser = async () => {
 		try {
@@ -39,7 +41,7 @@ const AuthProvider = ({ children }) => {
 	}, [])
 
 	return (
-		<AuthContent.Provider value={{ user, setUser, cart, setCart, key, setKey, authApi }}>
+		<AuthContent.Provider value={{ user, setUser, cart, setCart, cookies, setCookie, removeCookie, authApi }}>
 			{children}
 		</AuthContent.Provider>
 	)
