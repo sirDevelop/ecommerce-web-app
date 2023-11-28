@@ -1,10 +1,13 @@
 ### This webapp needs:
 
-A mongoDB backend to store the products being sold on the site
+Login via Google OAuth
 
-add to cart functionality
+MongoDG backend
 
-google OAuth for logging in
+Add to cart and 1 click checkout
 
-create orders from the products they bought and save it in MongoDB
+Stripe API for checking out
 
+cookies to store cart data which persists across reloading
+
+Store a person's order history
