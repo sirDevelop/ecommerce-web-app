@@ -1,8 +1,8 @@
-### This webapp needs:
+### Ecommerce Webapp MouthWatering Deals. Supports:
 
 Login via Google OAuth
 
-MongoDG backend
+MongoDB backend
 
 Add to cart and 1 click checkout
 
