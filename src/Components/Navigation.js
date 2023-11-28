@@ -20,10 +20,10 @@ import Dropdown from "react-bootstrap/Dropdown"
 import ButtonGroup from "react-bootstrap/ButtonGroup"
 import Offcanvas from "react-bootstrap/Offcanvas"
 import { Badge } from "react-bootstrap"
-import { useAuth } from "./AuthProvider"
+import { useGlobal } from "./ParentComponent"
 
 const Navigation = () => {
-	const { user, setUser, cart, setCart, authApi } = useAuth()
+	const { user, setUser, cart, setCart, authApi } = useGlobal()
 	// const pathName = useLocation().pathname
 	// const { cart, setCartOpen, loggedIn, openLogin, loadingLogin, logout } =
 	// 	useGlobals()

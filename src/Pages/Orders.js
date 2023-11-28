@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react"
-import { useAuth } from "../Components/AuthProvider"
+import { useGlobal } from "../Components/ParentComponent"
 import { Col, Container, Row, Tabs, Tab, Card } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router-dom"
 
 const Orders = () => {
 	const { tag } = useParams()
 	const navigate = useNavigate()
-	const { cart, setCart, cookies, setCookie, authApi } = useAuth()
+	const { cart, setCart, cookies, authApi, user } = useGlobal()
 	const [orderHistory, setOrderHistory] = useState([])
 
 	useEffect(() => {
-		if (cookies && cookies.cart) {
-			setCart(cookies.cart);
-		}
 		getOrderHistory()
 	}, [])
 
-	const getOrderHistory = async () => {
+	const getOrderHistory = () => {
 		try {
 			authApi.post("/api/orders/getOrderHistory").then((response) => {
 				setOrderHistory(response.data.orderHistory)
@@ -26,41 +23,13 @@ const Orders = () => {
 		}
 	}
 	const checkoutOrder = () => {
-		// cart.map((item) => {
-
-		// })
-
-		// authApi
-		//     .post("/api/create-checkout-session", async (req, res) => {
-		//         const { product } = req.body;
-		//         const session = await stripe.checkout.sessions.create({
-		//             payment_method_types: ["card"],
-		//             line_items: [
-		//                 {
-		//                     price_data: {
-		//                         currency: "usd",
-		//                         product_data: {
-		//                             name: product.name,
-		//                         },
-		//                         unit_amount: product.price * 100,
-		//                     },
-		//                     quantity: product.quantity,
-		//                 },
-		//             ],
-		//             mode: "payment",
-		//             success_url: "http://localhost:3000/success",
-		//             cancel_url: "http://localhost:3000/cancel",
-		//         });
-		//         res.json({ id: session.id });
-		//     });
-
 		authApi
 			.post("/api/orders/checkoutOrder", { cart: JSON.stringify(cart) })
 			.then((response) => {
 				if (response.status === 200) {
-					// uncomment once checkout order is working and we can redirect to stripe screen
-					// setCart([])
-					// setCookie('cart', [], { path: '/' });
+					setCart([])
+					if (response.data.url)
+						window.open(response.data.url, "_self")
 				}
 			})
 			.catch((err) => {
@@ -80,26 +49,21 @@ const Orders = () => {
 							className="mb-3"
 						>
 							<Tab eventKey="cart" title="Cart">
-								<>
+								<Container className="border border-white mb-2">
 									{cart && cart.length ? (
 										cart.map((item, i) => {
 											return (
-												<>
-													<Container>
-														<Row className="m-2">
-															<Col className="fw-bold">{item.title}</Col>
-															<Col>
-																{item.quantity}{" "}
-															</Col>
-															<Col>${item.price} </Col>
-														</Row>
-													</Container>
-												</>
+												<Row className="m-2">
+													<Col className="fw-bold">{item.title}</Col>
+													<Col>
+														{item.quantity}{" "}
+													</Col>
+													<Col>${item.price} </Col>
+												</Row>
 											)
 										})
-
 									) : (
-										<>
+										<Container>
 											<p>
 												Wow, such empty. Please visit the
 												Catalog tab to add something.
@@ -115,94 +79,107 @@ const Orders = () => {
 													className="w-25"
 												/>
 											</Row>
-										</>
+										</Container>
+
 									)}
-								</>
-								{cart && cart.length ? (
-									<>
-										<Container>
+									{cart && cart.length ? (
+										<>
 											<Row className="m-2">
 												<Col className="fw-bold">Total</Col>
 												<Col>
 													{cart.reduce((prevQuantity, object) => { return prevQuantity + object.quantity }, 0)}
 												</Col>
-												<Col>${cart.reduce((prevPrice, object) => { return prevPrice + object.quantity* object.price }, 0)} </Col>
+												<Col>${cart.reduce((prevPrice, object) => { return prevPrice + object.quantity * object.price }, 0).toFixed(2)} </Col>
 											</Row>
-										</Container>
-										<Row className="m-4">
+											<Row className="m-2 my-3">
 											<Col>
-												<button className="btn btn-success" onClick={checkoutOrder}>
-													Checkout Order
-												</button>
-											</Col>
-										</Row>
-									</>
-								) : (
-									<></>
-								)}
+													<button className="btn btn-secondary mr-2" onClick={() => {
+														setCart([])
+													}}>
+														Clear Cart
+													</button>
+												
+													<button className="btn btn-success mx-2" onClick={checkoutOrder}>
+														Checkout Order
+													</button>
+												</Col>
+											</Row>
+										</>
+									) : (
+										<></>
+									)}
+								</Container>
+
 							</Tab>
 							<Tab eventKey="history" title="Order History">
-								<Row>
-									<Col className="fw-bold">Order Date</Col>
-									<Col className="fw-bold">Quantity </Col>
-									<Col className="fw-bold">Price </Col>
-								</Row>
+								<Container className="mb-3">
+									<Row>
+										<Col className="fw-bold">Order Date</Col>
+										<Col className="fw-bold">Quantity </Col>
+										<Col className="fw-bold">Price </Col>
+									</Row>
+								</Container>
+
 								{orderHistory && orderHistory.length ? (
 									orderHistory.map((order, i) => {
 										return (
 											<>
-												<Row>
-													{new Date(
-														order.createdAt
-													).toLocaleDateString(
-														"en-us",
-														{
-															weekday: "long",
-															month: "short",
-															day: "numeric",
-															hour: "numeric",
-															minute: "numeric",
-															hour12: true,
-														}
-													)}
-												</Row>
-												{
-												JSON.parse(order.cart).map(
-													(cartValue, cartIndex) => {
-														return (
-															<Row>
-																<Col>
-																	{
-																		cartValue.title
-																	}{" "}
-																</Col>
-																<Col>
-																	{
-																		cartValue.quantity
-																	}{" "}
-																</Col>
-																<Col>
-																	${
-																		cartValue.price
-																	}{" "}
-																</Col>
-															</Row>
+												<Container key={i} className="border border-secondary mb-2 rounded shadow">
+													<Row>
+														<Col className="fw-bold">
+															{new Date(
+																order.createdAt
+															).toLocaleDateString(
+																"en-us",
+																{
+																	weekday: "long",
+																	month: "short",
+																	day: "numeric",
+																	hour: "numeric",
+																	minute: "numeric",
+																	hour12: true,
+																}
+															)}
+														</Col>
+													</Row>
+													{
+														JSON.parse(order.cart).map(
+															(cartValue, i) => {
+																return (
+																	<Row key={i}>
+																		<Col>
+																			{
+																				cartValue.title
+																			}{" "}
+																		</Col>
+																		<Col>
+																			{
+																				cartValue.quantity
+																			}{" "}
+																		</Col>
+																		<Col>
+																			${
+																				cartValue.price
+																			}{" "}
+																		</Col>
+																	</Row>
+																)
+															}
 														)
 													}
-												)
-												}
 
-												<Row>
-													<Col className="fw-bold">
-														Total
-													</Col>
-													<Col>
-													{JSON.parse(order.cart).reduce((prevQuantity, object) => { return prevQuantity + object.quantity }, 0)}
-													</Col>
-													<Col>
-                                                    ${JSON.parse(order.cart).reduce((prevPrice, object) => { return prevPrice + object.quantity* object.price }, 0.0)}
-													</Col>
-												</Row>
+													<Row>
+														<Col>
+															Total
+														</Col>
+														<Col>
+															{JSON.parse(order.cart).reduce((prevQuantity, object) => { return prevQuantity + object.quantity }, 0)}
+														</Col>
+														<Col>
+															${JSON.parse(order.cart).reduce((prevPrice, object) => { return prevPrice + object.quantity * object.price }, 0.0).toFixed(2)}
+														</Col>
+													</Row>
+												</Container>
 											</>
 										)
 									})

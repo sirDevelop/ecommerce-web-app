@@ -43,7 +43,7 @@ function Footer() {
 						<Row>
 						{socials.map((social, i) => {
 							return (
-								<Col sm={3} >
+								<Col sm={3} key={i}>
 									<a href={social.url} target="_blank" className="mx-3">
 										<FontAwesomeIcon icon={social.icon} size="2x" />
 									</a>
@@ -52,7 +52,6 @@ function Footer() {
 						})
 						}
 						</Row>
-				
                     </Col>
 				</Row>
 			</Container>

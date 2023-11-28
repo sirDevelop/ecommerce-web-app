@@ -12,6 +12,10 @@ const orderSchema = mongoose.Schema({
         required: [true, 'unique code is required'],
 		unique: true,
 	},
+	stripeSessionId: {
+		type: String,
+        required: [true, 'stripe code is required']
+	},
 	cart: {
 		// will be object converted to a string with JSON.stringify
 		// JSON.stringify(catalogItem)

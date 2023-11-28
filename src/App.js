@@ -7,12 +7,12 @@ import Payment from "./Pages/Payment"
 import Footer from "./Components/Footer"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Container } from "react-bootstrap"
-import AuthProvider from "./Components/AuthProvider"
+import ParentComponent from "./Components/ParentComponent"
 
 function App() {
 	return (
 		<BrowserRouter>
-			<AuthProvider>
+			<ParentComponent>
 				<div className="d-flex flex-column min-vh-100">
 					<Navigation />
 					<Container className="my-5">
@@ -22,12 +22,15 @@ function App() {
 							<Route path="/catalog" element={<Catalog />} />
 							<Route path="/orders" element={<Orders />} />
 							<Route path="/orders/:tag" element={<Orders />} />
+							{/* {["/payment/*", "/payment/:status/:code/:session"].map((path) => {
+								return <Route path={path} element={<Payment />} />
+							})} */}
 							<Route path="/payment/:status/:code/:session" element={<Payment />} />
 						</Routes>
 					</Container>
 					<Footer />
 				</div>
-			</AuthProvider>
+			</ParentComponent>
 		</BrowserRouter>
 	)
 }

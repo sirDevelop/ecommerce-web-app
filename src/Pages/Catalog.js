@@ -1,54 +1,285 @@
-import { Container, Row, Col, Card, Button } from "react-bootstrap"
+import { Container, Row, Col, Card, Button, Form, ButtonGroup } from "react-bootstrap"
 import { BarLoader, BounceLoader } from "react-spinners"
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Fade from "react-reveal"
-import { useAuth } from "../Components/AuthProvider";
-const Catalog = () => {
-	const { cart, setCart, setCookie, authApi } = useAuth();
-	const [page, setPage] = useState(0)
+import { useGlobal } from "../Components/ParentComponent";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Swal from 'sweetalert2'
 
+const Catalog = () => {
+	const { cart, setCart, authApi } = useGlobal();
+	const [catalogItems, setCatalogItems] = useState([])
+	const [page, setPage] = useState(1)
+	const [isLoadingMore, setIsLoadingMore] = useState(false)
+	const [isMoreAvailable, setIsMoreAvailable] = useState(true)
+	const [category, setCategory] = useState("All")
 	const itemHandler = (data) => {
-		setTimeout(() => {
-			setCatalogItems([...catalogItems, ...data.getCatalogItems])
-			setPage(data.page)
-		}, 500);
+		setIsMoreAvailable(data.moreItemsAvailable)
+		setCatalogItems([...catalogItems, ...data.getCatalogItems])
+		setPage(page + 1)
 	}
+
 	const apiInstance = axios.create({ baseURL: "http://localhost:9000/api/" })
 	const [appIsLoaded, setAppIsLoaded] = useState(false)
+
 	useEffect(() => {
 		if (!appIsLoaded) {
-			apiInstance.post("catalog/getAllItems", {}).then((response) => {
+			apiInstance.post("catalog/getItems", { category, page }).then((response) => {
 				itemHandler(response.data)
 			}).finally(() => {
 				setAppIsLoaded(true)
 			})
+		}
+	}, [appIsLoaded]);
+	useEffect(() => {
+		setPage(1)
+		setCatalogItems([])
+		setAppIsLoaded(false)
+	}, [category])
 
-			// apiInstance.post("catalog/createCatalogItems", {}).then((response) =>{
-			// 	console.log(response.data);
-			// })
+
+
+	const loadMoreItems = () => {
+		if (!isLoadingMore) {
+			setIsLoadingMore(true)
+			apiInstance.post("catalog/getItems", { category, page }).then((response) => {
+				itemHandler(response.data)
+			}).finally(() => { setIsLoadingMore(false) })
+		}
+	}
+
+	const addToCart = (val) =>{
+			let currentOption =
+				cart.filter(
+					(cart) =>
+						cart.id ===
+						val._id
+				)
+			let quantity =
+				currentOption.length
+					? currentOption[0]
+						.quantity +
+					1
+					: 1
+			if (quantity === 1) {
+				setCart([
+					// ...cart chooses every cart item except the current id
+					...cart,
+					{
+						id: val._id,
+						quantity,
+						title: val.itemName,
+						price: val.price,
+						category: val.category,
+					},
+				])
+			} else {
+				setCart([
+					// chooses every cart item except the current id
+					...cart.map(
+						(cartVal) => {
+							if (
+								cartVal.id ===
+								val._id
+							)
+								return {
+									id: val._id,
+									quantity,
+									title: val.itemName,
+									price: val.price,
+									category: val.category,
+								}
+							else
+								return cartVal
+						}
+					),
+				])
+			}
+		
+	}
+
+	const removeFromCart = (val) => {
+		let currentOption =
+			cart.filter(
+				(cart) =>
+					cart.id ===
+					val._id
+			)
+		let quantity =
+			currentOption.length
+				? currentOption[0]
+					.quantity - 1
+				: 1
+
+		setCart([
+			// chooses every cart item except the current id
+			...cart.filter(cartVal => cartVal.id ===
+				val._id && cartVal.quantity > 1 || cartVal.id !== val._id).map(
+				(cartVal) => {
+					if (
+						cartVal.id ===
+						val._id
+					)
+						return {
+							id: val._id,
+							quantity,
+							title: val.itemName,
+							price: val.price,
+							category: val.category,
+						}
+					else
+						return cartVal
+				}
+			),
+		])
+
+	}
+	const changeCartItemQuantity = (val, newQuantity) => {
+		if(newQuantity <=0) {
+			// don't do anthing
+			newQuantity = 0
+			Swal.fire({
+				title: "Error",
+				text: "Please enter a valid quantity",
+				icon: "error"
+			  });
 		}
 
-	}, []);
+		if(newQuantity > val.quantity) {
+			// set newQuantity to max quantity
+			newQuantity = val.quantity
+			Swal.fire("Max units in stock is " + val.quantity);
+		}
 
-	const [catalogItems, setCatalogItems] = useState([])
-	const loadMoreItems = () => {
-		apiInstance.post("catalog/getAllItems", { loadMore: true, page }).then((response) => {
-			itemHandler(response.data)
-		})
+		let currentOption =
+			cart.filter(
+				(cart) =>
+					cart.id ===
+					val._id
+			)
+		let quantity =
+			currentOption.length
+				? parseInt(newQuantity)
+				: 1
+
+		setCart([
+			// chooses every cart item except the current id
+			...cart.filter(cartVal => cartVal.id ===
+				val._id && newQuantity > 0 || cartVal.id !== val._id).map(
+				(cartVal) => {
+					if (
+						cartVal.id ===
+						val._id
+					)
+						return {
+							id: val._id,
+							quantity,
+							title: val.itemName,
+							price: val.price,
+							category: val.category,
+						}
+					else
+						return cartVal
+				}
+			),
+		])
+
 	}
-	// buy now
-	// add to cart
-
 	return (
 		<div className="text-center">
 			<Container>
-				<Row className="">
+				<Row>
+
+					<Form.Select size="lg" defaultValue={category} onChange={(e) => { setCategory(e.target[e.target.selectedIndex].text) }}>
+						{['All', 'Decorative', 'Office', 'Ceramics', 'Travel', 'Artwork', 'Outdoors', 'Home Goods', 'Skincare', 'Metaphysical', 'Electronics'].map((item,i) => {
+							return <option key={i} value={{ item }}>{item}</option>
+						})}
+					</Form.Select>
 					{catalogItems.length ?
-						<Fade>
-							<Row className="">
-								{catalogItems.map((val, i) => {
+						<Row className="">
+							{catalogItems.map((val, i) => {
+								// the item if its in the cart, then its a null
+								let isInCart = cart.filter((item) => item.id === val._id)
+								return (
+									<Col
+										key={i}
+										lg={4}
+										md={6}
+										sm={12}
+										className="p-2 d-flex flex-wrap"
+									>
+										<Card className="border-1 shadow d-flex flex-column p-2">
+											<Card.Img
+												variant="top"
+												style={{ height: "200px", objectFit: "cover", objectPosition: "0 100%" }}
+												src={val.imageURL}
+												className=""
+											/>
+											<Card.Body>
+												<Card.Title className="fw-bold">{val.itemName}</Card.Title>
+												<Card.Text>
+													{
+														val.description && val.description.length > 300 ?
+															val.description.substring(0, 300) + "..." : val.description
+													}
+												</Card.Text>
+												<Card.Text>
+													{val.quantity ? <span className="text-success fst-italic">In Stock</span> : <span className="text-danger fst-italic">Out of Stock</span>}
+												</Card.Text>
+												<Card.Text className="fw-bold">
+													${val.price}
+												</Card.Text>
+											</Card.Body>
+											<Card.Footer>
+												<>
+													<Button disabled={val.disabled || val.quantity <= 0} onClick={() => {
+														setCatalogItems(
+															[
+																...catalogItems.map((catalogItem, catalogItemIndex) => {
+																	return catalogItemIndex === i ? { ...catalogItem, disabled: true } : catalogItem
+																})
+															]
+														)
+														authApi.post('/api/orders/oneClickBuy', { catalogId: val._id }).then((response) => {
+															if (response.data.url) window.open(response.data.url, "_self")
+														})
+													}
+													} className="mx-2 mt-2 btn btn-warning  bg-gradient">1-Click Buy</Button>
+
+													{
+														isInCart.length ?
+															<>
+																<ButtonGroup className="mt-2" style={{ width: "40%" }}>
+																	<Button className="bg-gradient" onClick={() => { removeFromCart(val) }} variant="primary">-</Button>
+																	<Form.Control
+																		type="text"
+																		className="text-center"
+																		value={isInCart[0].quantity}
+																		onChange={(e) => {
+																			changeCartItemQuantity(val, e.target.value)
+																		}}
+
+																	/>
+																	<Button className="bg-gradient" onClick={() => { addToCart(val) }} variant="primary">+</Button>
+																</ButtonGroup>
+															</>
+															:
+															<Button disabled={val.quantity <= 0} className="mx-2 mt-2 btn btn-primary  bg-gradient"
+																onClick={() => { addToCart(val) }}
+															>Add to Cart</Button>
+													}
+												</>
+											</Card.Footer>
+										</Card>
+									</Col>
+								)
+							})}
+						</Row>
+						: (
+							<>
+								{Array.from(Array(12), () => 0).map((_, i) => {
 									return (
 										<Col
 											key={i}
@@ -58,141 +289,37 @@ const Catalog = () => {
 											className="p-2 d-flex flex-wrap"
 										>
 											<Card className="border-1 shadow d-flex flex-column p-2">
-												<Card.Img
-													variant="top"
-													style={{ height: "200px", objectFit: "cover", objectPosition: "0 100%" }}
-													src={val.imageURL}
-													className=""
-												/>
-												<Card.Body>
-													<Card.Title className="fw-bold">{val.itemName}</Card.Title>
-													<Card.Text>
-														{
-															val.description && val.description.length > 300 ?
-																val.description.substring(0, 300) + "..." : val.description
-														}
-													</Card.Text>
-													<Card.Text>
-														{val.quantity ? <p className="text-success fst-italic">In Stock</p> : <p className="text-danger fst-italic">Out of Stock</p>}
-													</Card.Text>
-													<Card.Text className="fw-bold">
-														${val.price}
-													</Card.Text>
-												</Card.Body>
-												<Card.Footer>
-													{val.quantity ?
-														<>
-															<Button disabled={val.disabled} onClick={() => {
-																	setCatalogItems(
-																		[
-																			...catalogItems.map((catalogItem, catalogItemIndex) => {
-																				return catalogItemIndex === i ? {...catalogItem, disabled: true} : catalogItem
-																			})
-																		]
-																	)
-																	authApi.post('/api/orders/oneClickBuy', {catalogId : val._id}).then((response) => {
-																		if (response.data.url) window.open(response.data.url, "_self")
-																	})
-																}
-															} className="mx-2 mt-2">1-Click Buy</Button>
-													<Button className="mx-2 mt-2"
-														onClick={() => {
-															let currentOption =
-																cart.filter(
-																	(cart) =>
-																		cart.id ===
-																		val._id
-																)
-															let quantity =
-																currentOption.length
-																	? currentOption[0]
-																		.quantity +
-																	1
-																	: 1
-															if (quantity === 1) {
-																setCart([
-																	// ...cart chooses every cart item except the current id
-																	...cart,
-																	{
-																		id: val._id,
-																		quantity,
-																		title: val.itemName,
-																		price: val.price,
-																		category: val.category,
-																	},
-																])
-																setCookie('cart', cart, { path: '/' });
-															} else {
-																setCart([
-																	// chooses every cart item except the current id
-																	...cart.map(
-																		(cartVal) => {
-																			if (
-																				cartVal.id ===
-																				val._id
-																			)
-																				return {
-																					id: val._id,
-																					quantity,
-																					title: val.itemName,
-																					price: val.price,
-																					category: val.category,
-																				}
-																			else
-																				return cartVal
-																		}
-																	),
-																])
-																setCookie('cart', cart, { path: '/' });
-															}
-														}}
-														variant="primary"
-													>Add to Cart</Button></> :
-												<></>
-													}
-
-											</Card.Footer>
-										</Card>
-										</Col>
-							)
-								})}
-						</Row>
-						</Fade>
-				: (
-				<>
-					{[0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => {
-						return (
-							<Col
-								key={i}
-								lg={4}
-								md={6}
-								sm={12}
-								className="p-2 d-flex flex-wrap"
-							>
-								<Fade when={!appIsLoaded}>
-									<Card className="border-1 shadow d-flex flex-column p-2">
-										<BounceLoader
-											color="#cc0000"
-											className="mx-auto"
-										/>
-										<Card.Body>
-											<Card.Text>
-												<BarLoader
+												<BounceLoader
 													color="#cc0000"
 													className="mx-auto"
 												/>
-											</Card.Text>
-										</Card.Body>
-									</Card>
-								</Fade>
-							</Col>
-						)
-					})}
-				</>
+												<Card.Body>
+													<Card.Text>
+														<BarLoader
+															color="#cc0000"
+															className="mx-auto"
+														/>
+													</Card.Text>
+												</Card.Body>
+											</Card>
+										</Col>
+									)
+								})}
+							</>
 						)}
-			</Row>
-		</Container>
-		</div >
+				</Row>
+			</Container>
+			{isMoreAvailable ?
+				<Button
+					className="btn btn-success mt-4 btn-lg bg-gradient"
+					disabled={isLoadingMore}
+					onClick={() => {
+						loadMoreItems()
+					}}
+				>
+					{!isLoadingMore ? "Load more" : <FontAwesomeIcon icon={faSpinner} spin />}
+				</Button> : <></>}
+		</div>
 	)
 }
 

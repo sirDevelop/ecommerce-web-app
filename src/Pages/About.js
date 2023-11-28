@@ -47,8 +47,7 @@ const About = () => {
 						{
 							sectionInfo.map((val, i) => {
 								return (
-
-									<Card className="border-1 shadow d-flex flex-column p-2 bg-light lead">
+									<Card className="border-1 shadow d-flex flex-column p-2 bg-light lead" key={i}>
 										{/* <Card.Img
 												variant="top"
 												src={val.imageURL}
