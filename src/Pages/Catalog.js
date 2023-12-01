@@ -1,12 +1,14 @@
 import { Container, Row, Col, Card, Button, Form, ButtonGroup } from "react-bootstrap"
 import { BarLoader, BounceLoader } from "react-spinners"
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useGlobal } from "../Components/ParentComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import ReactSlider from 'react-slider'
 import Swal from 'sweetalert2'
+import MultiRangeSlider from "multi-range-slider-react";
 
 const Catalog = () => {
 	const { cart, setCart, authApi } = useGlobal();
@@ -15,8 +17,14 @@ const Catalog = () => {
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
 	const [isMoreAvailable, setIsMoreAvailable] = useState(true)
 	const [category, setCategory] = useState("All")
+	const [descendingPrice, setDescendingPrice] = useState(false)
+	const [maxPriceRange, setMaxPriceRange] = useState(0)
+	const [priceRange, setPriceRange] = useState({min: 0, max: 0})
+	const prevPriceRange = useRef(0)
+
 	const itemHandler = (data) => {
 		setIsMoreAvailable(data.moreItemsAvailable)
+		setMaxPriceRange(data.maxPriceValue)
 		setCatalogItems([...catalogItems, ...data.getCatalogItems])
 		setPage(page + 1)
 	}
@@ -26,7 +34,7 @@ const Catalog = () => {
 
 	useEffect(() => {
 		if (!appIsLoaded) {
-			apiInstance.post("catalog/getItems", { category, page }).then((response) => {
+			apiInstance.post("catalog/getItems", { category, page, descendingPrice, priceRange }).then((response) => {
 				itemHandler(response.data)
 			}).finally(() => {
 				setAppIsLoaded(true)
@@ -37,14 +45,21 @@ const Catalog = () => {
 		setPage(1)
 		setCatalogItems([])
 		setAppIsLoaded(false)
-	}, [category])
+	}, [category, descendingPrice, priceRange])
+	useEffect(() => {
+		if (catalogItems.length && prevPriceRange.current === 0){
+			prevPriceRange.current = maxPriceRange
+			setPriceRange({ ...priceRange, max: maxPriceRange })
+		}
+	}, [maxPriceRange])
+	
 
 
 
 	const loadMoreItems = () => {
 		if (!isLoadingMore) {
 			setIsLoadingMore(true)
-			apiInstance.post("catalog/getItems", { category, page }).then((response) => {
+			apiInstance.post("catalog/getItems", { category, page, descendingPrice, priceRange }).then((response) => {
 				itemHandler(response.data)
 			}).finally(() => { setIsLoadingMore(false) })
 		}
@@ -192,11 +207,41 @@ const Catalog = () => {
 			<Container>
 				<Row>
 
-					<Form.Select size="lg" defaultValue={category} onChange={(e) => { setCategory(e.target[e.target.selectedIndex].text) }}>
-						{['All', 'Decorative', 'Office', 'Ceramics', 'Travel', 'Artwork', 'Outdoors', 'Home Goods', 'Skincare', 'Metaphysical', 'Electronics'].map((item,i) => {
-							return <option key={i} value={{ item }}>{item}</option>
-						})}
-					</Form.Select>
+					<Col sm={3} className="p-2">
+						<Form.Label className="text-white">Category</Form.Label>
+						<Form.Select size="lg" defaultValue={category} onChange={(e) => { setCategory(e.target[e.target.selectedIndex].text) }}>
+							{['All', 'Decorative', 'Office', 'Ceramics', 'Travel', 'Artwork', 'Outdoors', 'Home Goods', 'Skincare', 'Metaphysical', 'Electronics'].map((item, i) => {
+								return <option key={i} value={{ item }}>{item}</option>
+							})}
+						</Form.Select>
+					</Col>
+					<Col sm={3} className="p-2">
+						<Form.Label className="text-white">Sort by Price</Form.Label>
+						<Form.Select size="lg" defaultValue={descendingPrice} onChange={(e) => { setDescendingPrice(e.target[e.target.selectedIndex].value === "descending" ? true:false) }}>
+							<option value="ascending">Ascending</option>
+							<option value="descending">Descending</option>
+						</Form.Select>
+					</Col>
+					<Col sm={3} className="p-2">
+						<Form.Label className="text-white">Price Range</Form.Label>
+						{catalogItems.length ? 
+						<MultiRangeSlider
+							//default value
+							min={0}
+							max={maxPriceRange}
+							step={1}
+							//modified by client value
+							minValue={priceRange.min}
+							maxValue={priceRange.max}
+							className="bg-white"
+							onChange={(e) => {
+								setPriceRange({ ...priceRange, min: e.minValue, max: e.maxValue })
+							}}
+						/>:""}
+						
+
+
+					</Col>
 					{catalogItems.length ?
 						<Row className="">
 							{catalogItems.map((val, i) => {

@@ -3,6 +3,7 @@ const CatalogItem = require('../models/CatalogItem')
 
 const createCatalog = asyncHandler(async (req, res) => {
 	try {
+		await CatalogItem.deleteMany({})
 		await CatalogItem.create({
 			itemName: "Explorer's Haven Backpack"
 			, price: "20.99"
@@ -304,7 +305,7 @@ const editCatalogItem = asyncHandler(async (req, res) => {
 		if (description) {
 			updateDoc = {...updateDoc, description}
 		}
-		
+
 		const result = await CatalogItem.updateOne({"_id": id}, updateDoc);
 		console.log(
 			`${result.matchedCount} document(s) found, updated ${result.modifiedCount} document(s)`,
@@ -358,32 +359,37 @@ const deleteAllItems = asyncHandler(async (req, res) => {
 // pull all items from the database mongo
 const getCatalogItems = asyncHandler(async (req, res) => {
 	try {
-		const { category, priceMin, priceMax, descendingPrice, page } = req.body
+		const { category, priceRange, descendingPrice, page } = req.body
 		const maxItems = 12
 		let query = {}
 		let sort = {}
 		if (category && category !== 'All') {
 			query = { ...query, category: category }
 		}
-		// do the filter
-		// if (priceMin && priceMin > 0) {
-		//     query = { ...query, "priceMin": priceMin };
-		// }
-
-		// if (priceMax) {
-		//     query = { ...query, "priceMax": priceMax };
-		// }
+		if(priceRange){
+			if(priceRange.min > 0 && priceRange.max > 0) {
+				query = { ...query, price: { $gte: priceRange.min, $lte: priceRange.max} };
+			} else if (priceRange.max > 0) {
+				query = { ...query, price: { $lte: priceRange.max} };
+			}
+		}
 
 		if (descendingPrice) {
 			sort = { price: -1 };
+		} else {
+			sort = { price: 1 };
 		}
-
+		
+		const maxPrice = await CatalogItem.find({}).sort({price: -1}).limit(1)
+		const maxPriceValue = maxPrice.length ? maxPrice[0].price:0
+		
 		const getCatalogItems = await CatalogItem.find(query).skip((page - 1) * maxItems).sort(sort).limit(maxItems)
 		const moreItemsAvailable = await CatalogItem.find(query).skip(((page - 1) * maxItems) + 1).sort(sort).limit(maxItems)
 
 		res.status(200).json({
 			moreItemsAvailable: moreItemsAvailable.length >= maxItems,
 			getCatalogItems,
+			maxPriceValue
 		})
 	} catch (error) {
 		res.status(422)

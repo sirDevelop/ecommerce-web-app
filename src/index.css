@@ -1,3 +1,6 @@
 .no-arrow .dropdown-toggle::after {
 	display: none !important;
 }
+.multi-range-slider .bar-inner{
+	background-color: #007bff;
+}

@@ -1,0 +1,30 @@
+body {
+	padding: 0;
+	margin: 0;
+	background-color: #17212b;
+	background-image: linear-gradient(to bottom, #17212b, #222222);
+}
+#root {
+	min-height: 100vh;
+}
+.login input::placeholder {
+	color: #ffffff;
+}
+.blue-gradient {
+	background: #02aabd;
+	background: linear-gradient(#02aabd, #00cdac) !important;
+}
+.green-gradient {
+	background: #11998e;
+	background: linear-gradient(#11998e, #38ef7d) !important;
+}
+.admin.navbar {
+	background-color: #17212b;
+	background-image: linear-gradient(to bottom, #17212b, #10212b);
+}
+.cursor-pointer{
+	cursor:pointer;
+}
+.placeholder-dark::placeholder{
+	color: #666666;
+}
