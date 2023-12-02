@@ -2,7 +2,7 @@ body {
 	padding: 0;
 	margin: 0;
 	background-color: #17212b;
-	background-image: linear-gradient(to bottom, #17212b, #222222);
+	/* background-image: linear-gradient(to bottom, #17212b, #222222); */
 }
 #root {
 	min-height: 100vh;

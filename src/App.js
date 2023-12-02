@@ -20,8 +20,7 @@ function App() {
 				<Container className={`${pathname.indexOf("admin") === -1 ? "my-5" : ""}`}>
 					<Routes>
 						<Route path="/" element={<Home />} />
-						<Route path="/admin/" element={<MainComponent><Admin /></MainComponent>} />
-						<Route path="/admin/:pageName" element={<MainComponent><Admin /></MainComponent>} />
+						<Route path="/admin/*" element={<MainComponent><Admin /></MainComponent>} />
 						<Route path="/about" element={<About />} />
 						<Route path="/catalog" element={<Catalog />} />
 						<Route path="/orders" element={<Orders />} />

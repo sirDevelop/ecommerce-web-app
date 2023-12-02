@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom"
 import AuthProvider from "./Components/useAuth"
 import Login from "./Pages/Login"
 import Preloader from "./Components/Preloader"
@@ -9,7 +9,6 @@ import { Fade } from "react-reveal"
 import Dashboard from "./Pages/Dashboard"
 import CatalogItems from "./Pages/CatalogItems"
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
 import "./index.css"
 const Admin = () => {
 	const { loadingLogin } = useMain()
@@ -39,7 +38,11 @@ const Admin = () => {
 				// fade is an animation effect
 				<Fade>
 					<NavBar />
-					{mainComponent}
+					<Routes>
+						<Route path="/admin/login" element={<Login />} />
+							<Route path="/admin/dashboard" element={<Dashboard />} />
+							<Route path="/admin/dashboard" element={<CatalogItems />} />
+					</Routes>
 				</Fade>
 			)}
 		</AuthProvider>

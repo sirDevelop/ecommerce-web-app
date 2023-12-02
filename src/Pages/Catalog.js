@@ -1,4 +1,4 @@
-import { Container, Row, Col, Card, Button, Form, ButtonGroup } from "react-bootstrap"
+import { Container, Row, Col, Card, Button, Form, ButtonGroup, Alert } from "react-bootstrap"
 import { BarLoader, BounceLoader } from "react-spinners"
 import classNames from "classnames";
 import { useEffect, useState, useRef } from "react";
@@ -19,7 +19,7 @@ const Catalog = () => {
 	const [category, setCategory] = useState("All")
 	const [descendingPrice, setDescendingPrice] = useState(false)
 	const [maxPriceRange, setMaxPriceRange] = useState(0)
-	const [priceRange, setPriceRange] = useState({min: 0, max: 0})
+	const [priceRange, setPriceRange] = useState({ min: 0, max: 0 })
 	const prevPriceRange = useRef(0)
 
 	const itemHandler = (data) => {
@@ -47,12 +47,12 @@ const Catalog = () => {
 		setAppIsLoaded(false)
 	}, [category, descendingPrice, priceRange])
 	useEffect(() => {
-		if (catalogItems.length && prevPriceRange.current === 0){
+		if (catalogItems.length && prevPriceRange.current === 0) {
 			prevPriceRange.current = maxPriceRange
 			setPriceRange({ ...priceRange, max: maxPriceRange })
 		}
 	}, [maxPriceRange])
-	
+
 
 
 
@@ -65,54 +65,54 @@ const Catalog = () => {
 		}
 	}
 
-	const addToCart = (val) =>{
-			let currentOption =
-				cart.filter(
-					(cart) =>
-						cart.id ===
-						val._id
-				)
-			let quantity =
-				currentOption.length
-					? currentOption[0]
-						.quantity +
-					1
-					: 1
-			if (quantity === 1) {
-				setCart([
-					// ...cart chooses every cart item except the current id
-					...cart,
-					{
-						id: val._id,
-						quantity,
-						title: val.itemName,
-						price: val.price,
-						category: val.category,
-					},
-				])
-			} else {
-				setCart([
-					// chooses every cart item except the current id
-					...cart.map(
-						(cartVal) => {
-							if (
-								cartVal.id ===
-								val._id
-							)
-								return {
-									id: val._id,
-									quantity,
-									title: val.itemName,
-									price: val.price,
-									category: val.category,
-								}
-							else
-								return cartVal
-						}
-					),
-				])
-			}
-		
+	const addToCart = (val) => {
+		let currentOption =
+			cart.filter(
+				(cart) =>
+					cart.id ===
+					val._id
+			)
+		let quantity =
+			currentOption.length
+				? currentOption[0]
+					.quantity +
+				1
+				: 1
+		if (quantity === 1) {
+			setCart([
+				// ...cart chooses every cart item except the current id
+				...cart,
+				{
+					id: val._id,
+					quantity,
+					title: val.itemName,
+					price: val.price,
+					category: val.category,
+				},
+			])
+		} else {
+			setCart([
+				// chooses every cart item except the current id
+				...cart.map(
+					(cartVal) => {
+						if (
+							cartVal.id ===
+							val._id
+						)
+							return {
+								id: val._id,
+								quantity,
+								title: val.itemName,
+								price: val.price,
+								category: val.category,
+							}
+						else
+							return cartVal
+					}
+				),
+			])
+		}
+
 	}
 
 	const removeFromCart = (val) => {
@@ -132,37 +132,37 @@ const Catalog = () => {
 			// chooses every cart item except the current id
 			...cart.filter(cartVal => cartVal.id ===
 				val._id && cartVal.quantity > 1 || cartVal.id !== val._id).map(
-				(cartVal) => {
-					if (
-						cartVal.id ===
-						val._id
-					)
-						return {
-							id: val._id,
-							quantity,
-							title: val.itemName,
-							price: val.price,
-							category: val.category,
-						}
-					else
-						return cartVal
-				}
-			),
+					(cartVal) => {
+						if (
+							cartVal.id ===
+							val._id
+						)
+							return {
+								id: val._id,
+								quantity,
+								title: val.itemName,
+								price: val.price,
+								category: val.category,
+							}
+						else
+							return cartVal
+					}
+				),
 		])
 
 	}
 	const changeCartItemQuantity = (val, newQuantity) => {
-		if(newQuantity <=0) {
+		if (newQuantity <= 0) {
 			// don't do anthing
 			newQuantity = 0
 			Swal.fire({
 				title: "Error",
 				text: "Please enter a valid quantity",
 				icon: "error"
-			  });
+			});
 		}
 
-		if(newQuantity > val.quantity) {
+		if (newQuantity > val.quantity) {
 			// set newQuantity to max quantity
 			newQuantity = val.quantity
 			Swal.fire("Max units in stock is " + val.quantity);
@@ -183,22 +183,22 @@ const Catalog = () => {
 			// chooses every cart item except the current id
 			...cart.filter(cartVal => cartVal.id ===
 				val._id && newQuantity > 0 || cartVal.id !== val._id).map(
-				(cartVal) => {
-					if (
-						cartVal.id ===
-						val._id
-					)
-						return {
-							id: val._id,
-							quantity,
-							title: val.itemName,
-							price: val.price,
-							category: val.category,
-						}
-					else
-						return cartVal
-				}
-			),
+					(cartVal) => {
+						if (
+							cartVal.id ===
+							val._id
+						)
+							return {
+								id: val._id,
+								quantity,
+								title: val.itemName,
+								price: val.price,
+								category: val.category,
+							}
+						else
+							return cartVal
+					}
+				),
 		])
 
 	}
@@ -207,42 +207,55 @@ const Catalog = () => {
 			<Container>
 				<Row>
 
-					<Col sm={3} className="p-2">
-						<Form.Label className="text-white">Category</Form.Label>
-						<Form.Select size="lg" defaultValue={category} onChange={(e) => { setCategory(e.target[e.target.selectedIndex].text) }}>
-							{['All', 'Decorative', 'Office', 'Ceramics', 'Travel', 'Artwork', 'Outdoors', 'Home Goods', 'Skincare', 'Metaphysical', 'Electronics'].map((item, i) => {
-								return <option key={i} value={{ item }}>{item}</option>
-							})}
-						</Form.Select>
+					<Col sm={4} className="p-2 py-3">
+						<Row>
+							<Col sm={12} className="ps-3 pe-4">
+								<Form.Label>Category</Form.Label>
+								<Form.Select size="lg" defaultValue={category} onChange={(e) => { setCategory(e.target[e.target.selectedIndex].text) }}>
+									{['All', 'Decorative', 'Office', 'Ceramics', 'Travel', 'Artwork', 'Outdoors', 'Home Goods', 'Skincare', 'Metaphysical', 'Electronics'].map((item, i) => {
+										return <option key={i} value={{ item }}>{item}</option>
+									})}
+								</Form.Select>
+							</Col>
+						</Row>
 					</Col>
-					<Col sm={3} className="p-2">
-						<Form.Label className="text-white">Sort by Price</Form.Label>
-						<Form.Select size="lg" defaultValue={descendingPrice} onChange={(e) => { setDescendingPrice(e.target[e.target.selectedIndex].value === "descending" ? true:false) }}>
-							<option value="ascending">Ascending</option>
-							<option value="descending">Descending</option>
-						</Form.Select>
+					<Col sm={4} className="p-3">
+						<Row>
+							<Col sm={12} className="ps-0 pe-4">
+								<Form.Label>Sort by Price</Form.Label>
+								<Form.Select size="lg" defaultValue={descendingPrice} onChange={(e) => { setDescendingPrice(e.target[e.target.selectedIndex].value === "descending" ? true : false) }}>
+									<option value="ascending">Ascending</option>
+									<option value="descending">Descending</option>
+								</Form.Select>
+							</Col>
+						</Row>
 					</Col>
-					<Col sm={3} className="p-2">
-						<Form.Label className="text-white">Price Range</Form.Label>
-						{catalogItems.length ? 
-						<MultiRangeSlider
-							//default value
-							min={0}
-							max={maxPriceRange}
-							step={1}
-							//modified by client value
-							minValue={priceRange.min}
-							maxValue={priceRange.max}
-							className="bg-white"
-							onChange={(e) => {
-								setPriceRange({ ...priceRange, min: e.minValue, max: e.maxValue })
-							}}
-						/>:""}
-						
+					<Col sm={4} className="px-0 py-3">
+						<Row>
+							<Col sm={12} className="ps-1 pe-5">
+								<Form.Label className="text-dark">Price Range</Form.Label>
+								{appIsLoaded ?
+									<MultiRangeSlider
+										//default value
+										min={0}
+										max={maxPriceRange}
+										step={1}
+										//modified by client value
+										minValue={priceRange.min}
+										maxValue={priceRange.max}
+										className="bg-white py-3 rounded ps-3 pe-3"
+										baseClassName="multi-range-slider-black"
+										onChange={(e) => {
+											if (e.minValue != priceRange.min || e.maxValue != priceRange.max) setPriceRange({ ...priceRange, min: e.minValue, max: e.maxValue })
+										}}
+									/> : <></>}
 
 
+
+							</Col>
+						</Row>
 					</Col>
-					{catalogItems.length ?
+					{appIsLoaded ? catalogItems.length ?
 						<Row className="">
 							{catalogItems.map((val, i) => {
 								// the item if its in the cart, then its a null
@@ -321,7 +334,13 @@ const Catalog = () => {
 									</Col>
 								)
 							})}
-						</Row>
+						</Row> : (
+							<>
+								<Alert variant={"secondary"}>
+									No items matching the filter!
+								</Alert>
+							</>
+						)
 						: (
 							<>
 								{Array.from(Array(12), () => 0).map((_, i) => {

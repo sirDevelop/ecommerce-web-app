@@ -11,7 +11,7 @@ const NavBar = () => {
 	return (
 		<Container className="mt-5" data-bs-theme="dark">
 			<Row>
-				
+				Dashboard, nothing is added yet!
 			</Row>
 		</Container>
 	)

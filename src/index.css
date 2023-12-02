@@ -4,3 +4,9 @@
 .multi-range-slider .bar-inner{
 	background-color: #007bff;
 }
+.ruler{
+	display: none !important;
+}
+.labels{
+	display: none !important;
+}

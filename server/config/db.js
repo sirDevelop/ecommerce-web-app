@@ -1,7 +1,11 @@
 const mongoose = require("mongoose")
+require("dotenv").config()
+
 const connectDB = async () => {
 	try {
-		const conn = await mongoose.connect('mongodb+srv://cwaf17:jYgVAnNeasrph6qf@ecommerce.usa3wre.mongodb.net/')
+		const connString = 'mongodb+srv://'+process.env.MONGO_DB_USERNAME+':' + process.env.MONGO_DB_PASSWORD + '@ecommerce.usa3wre.mongodb.net/'
+		// console.log(connString)
+		const conn = await mongoose.connect(connString)
 		console.log(`MongoDB connected`)
 		//${conn.connection.srvHost}
 	} catch (error) {
@@ -11,8 +15,3 @@ const connectDB = async () => {
 }
 
 module.exports = connectDB
-
-//username: cwaf17
-// password: jYgVAnNeasrph6qf
-
-//mongodb+srv://cwaf17:<password>@ecommerce.usa3wre.mongodb.net/
