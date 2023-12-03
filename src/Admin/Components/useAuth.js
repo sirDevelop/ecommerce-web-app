@@ -3,7 +3,7 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import { useNavigate } from "react-router-dom"
 import Cookies from "universal-cookie"
-import { useMain } from "./MainComponent"
+import { useMain } from "./MainAdminComponent"
 
 const AuthContent = React.createContext()
 

@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, useParams } from "react-router-dom"
+import { Routes, Route, useLocation } from "react-router-dom"
 import AuthProvider from "./Components/useAuth"
 import Login from "./Pages/Login"
 import Preloader from "./Components/Preloader"
-import { useMain } from "./Components/MainComponent"
+import { useMain } from "./Components/MainAdminComponent"
 import NavBar from "./Components/NavBar"
 import Container from "react-bootstrap/esm/Container"
 import { Fade } from "react-reveal"
@@ -12,23 +12,6 @@ import { useState, useEffect } from "react"
 import "./index.css"
 const Admin = () => {
 	const { loadingLogin } = useMain()
-	const { pageName } = useParams()
-	const [mainComponent, setMainComponent] = useState("")
-	useEffect(() => {
-		switch (pageName) {
-			case "login":
-				setMainComponent(<Login />)
-				break;
-			case "catalogItems":
-				setMainComponent(<CatalogItems />)
-				break;
-			case "Dashboard":
-				setMainComponent(<Dashboard />)
-				break;
-			default:
-				setMainComponent(<Dashboard />)
-		}
-	}, [pageName])
 	
 	return (
 		<AuthProvider>
@@ -39,9 +22,9 @@ const Admin = () => {
 				<Fade>
 					<NavBar />
 					<Routes>
-						<Route path="/admin/login" element={<Login />} />
-							<Route path="/admin/dashboard" element={<Dashboard />} />
-							<Route path="/admin/dashboard" element={<CatalogItems />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/catalogItems" element={<CatalogItems />} />
 					</Routes>
 				</Fade>
 			)}

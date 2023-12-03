@@ -16,7 +16,7 @@ import { faTelegram } from "@fortawesome/free-brands-svg-icons"
 import { Fade } from "react-reveal"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../Components/useAuth"
-import { useMain } from "../Components/MainComponent"
+import { useMain } from "../Components/MainAdminComponent"
 import { useNavigate } from "react-router-dom"
 const Login = () => {
 	const navigate = useNavigate()

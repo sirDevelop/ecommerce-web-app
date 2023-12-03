@@ -2,7 +2,7 @@ import Navigation from "./Components/Navigation"
 import About from "./Pages/About"
 import Home from "./Pages/Home"
 import Admin from "./Admin/Admin"
-import MainComponent from "./Admin/Components/MainComponent"
+import MainAdminComponent from "./Admin/Components/MainAdminComponent"
 import Catalog from "./Pages/Catalog"
 import Orders from "./Pages/Orders"
 import Payment from "./Pages/Payment"
@@ -20,7 +20,7 @@ function App() {
 				<Container className={`${pathname.indexOf("admin") === -1 ? "my-5" : ""}`}>
 					<Routes>
 						<Route path="/" element={<Home />} />
-						<Route path="/admin/*" element={<MainComponent><Admin /></MainComponent>} />
+						<Route path="/admin/*" element={<MainAdminComponent><Admin /></MainAdminComponent>} />
 						<Route path="/about" element={<About />} />
 						<Route path="/catalog" element={<Catalog />} />
 						<Route path="/orders" element={<Orders />} />

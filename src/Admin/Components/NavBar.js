@@ -15,7 +15,7 @@ const NavBar = () => {
 			data-bs-theme="dark"
 		>
 			<Container>
-				<Navbar.Brand as={Link} to="/dashboard">
+				<Navbar.Brand as={Link} to="/admin/dashboard">
 					Ecommerce Dashboard
 				</Navbar.Brand>
 				<Navbar.Toggle/>
