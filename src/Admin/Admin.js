@@ -5,7 +5,7 @@ import Preloader from "./Components/Preloader"
 import { useMain } from "./Components/MainAdminComponent"
 import NavBar from "./Components/NavBar"
 import Container from "react-bootstrap/esm/Container"
-import { Fade } from "react-reveal"
+// import { Fade } from "react-reveal"
 import Dashboard from "./Pages/Dashboard"
 import CatalogItems from "./Pages/CatalogItems"
 import { useState, useEffect } from "react"
@@ -19,14 +19,16 @@ const Admin = () => {
 				<Preloader />
 			) : (
 				// fade is an animation effect
-				<Fade>
+				// <Fade>
+				<>
 					<NavBar />
 					<Routes>
 						<Route path="/login" element={<Login />} />
 						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/catalogItems" element={<CatalogItems />} />
 					</Routes>
-				</Fade>
+				</>
+				// </Fade>
 			)}
 		</AuthProvider>
 	)

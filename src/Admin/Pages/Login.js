@@ -13,7 +13,7 @@ import {
 	faUser,
 } from "@fortawesome/free-solid-svg-icons"
 import { faTelegram } from "@fortawesome/free-brands-svg-icons"
-import { Fade } from "react-reveal"
+// import { Fade } from "react-reveal"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../Components/useAuth"
 import { useMain } from "../Components/MainAdminComponent"
@@ -121,7 +121,7 @@ const Login = () => {
 							/>
 						</InputGroup>
 						{/* when registerOpen whole input group shows, oth */}
-						<Fade
+						{/* <Fade
 							bottom
 							collapse
 							when={registerOpen}
@@ -142,7 +142,7 @@ const Login = () => {
 										<></>
 									)
 							}}
-						>
+						> */}
 							<InputGroup
 								className={`${registerOpen ? "mt-3" : ""}`}
 							>
@@ -207,7 +207,7 @@ const Login = () => {
 									aria-label="Chat ID"
 								/>
 							</InputGroup>
-						</Fade>
+						{/* </Fade> */}
 						<Button
 							disabled={loadingLogin}
 							className={`mt-3 mx-2 shadow blue-gradient border-0 rounded`}
