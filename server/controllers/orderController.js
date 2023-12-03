@@ -1,9 +1,9 @@
-const devKeys = require('../config/dev');
+require("dotenv").config()
 const asyncHandler = require('express-async-handler')
 const Order = require('../models/Order')
 const CatalogItem = require('../models/CatalogItem')
 const { uuid } = require('uuidv4');
-const stripe = require("stripe")(devKeys.stripeSecretKey)
+const stripe = require("stripe")(process.env.stripeSecretKey)
 
 // pull all items from the database mongo
 const getOrderHistory = asyncHandler(async (req, res) => {

@@ -21,7 +21,7 @@ server.once('close', function () {
 	const mongoose = require('mongoose');
 	const cookieSession = require('cookie-session');
 	const bodyParser = require('body-parser');
-	const keys = require('./config/keys');
+	// const keys = require('./config/keys');
 	const express = require('express')
 	const router = express.Router()
 	const cors = require('cors')
@@ -43,7 +43,7 @@ server.once('close', function () {
 		cookieSession({
 			name: "session",
 			maxAge: 30 * 24 * 60 * 60 * 1000,
-			keys: [keys.cookieKey]
+			keys: [process.env.cookieKey]
 		})
 	)
 
