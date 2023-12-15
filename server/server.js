@@ -18,6 +18,7 @@ server.once('error', (e) => {
 server.once('listening', function () { server.close() })
 // if the server is closed which means we know the right port now then start the actual application
 server.once('close', function () {
+	require("dotenv").config(".env")
 	const mongoose = require('mongoose');
 	const cookieSession = require('cookie-session');
 	const bodyParser = require('body-parser');
@@ -31,7 +32,7 @@ server.once('close', function () {
 	const cookieParser = require('cookie-parser')
 	const passport = require('passport');
 	const passportStrategy = require("./services/passport");
-	const origins = ["http://127.0.0.1:3000", "http://localhost:3000", "http://127.0.0.1:3001", "http://localhost:3001"]
+	const origins = [...process.env.FRONT_END_URL.split(" ")]
 
 	const authRoute = require("./routes/authRoutes");
 

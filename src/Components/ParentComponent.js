@@ -10,6 +10,7 @@ export function useGlobal() {
 }
 
 const ParentComponent = ({ children }) => {
+	const apiInstance = axios.create({ baseURL: "http://localhost:9000/api/" })
 	const pathName = useLocation().pathname
 	const navigate = useNavigate()
 	const authApi = axios.create({
@@ -51,7 +52,7 @@ const ParentComponent = ({ children }) => {
 	}, [cart])
 
 	return (
-		<ParentContent.Provider value={{ user, setUser, cart, setCart, cookies, setCookie, removeCookie, authApi }}>
+		<ParentContent.Provider value={{ user, setUser, cart, setCart, cookies, setCookie, removeCookie, authApi,apiInstance }}>
 			{children}
 		</ParentContent.Provider>
 	)

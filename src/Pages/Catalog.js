@@ -11,7 +11,7 @@ import Swal from 'sweetalert2'
 import MultiRangeSlider from "multi-range-slider-react";
 
 const Catalog = () => {
-	const { cart, setCart, authApi } = useGlobal();
+	const { cart, setCart, authApi, apiInstance } = useGlobal();
 	const [catalogItems, setCatalogItems] = useState([])
 	const [page, setPage] = useState(1)
 	const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -29,7 +29,7 @@ const Catalog = () => {
 		setPage(page + 1)
 	}
 
-	const apiInstance = axios.create({ baseURL: "http://localhost:9000/api/" })
+	
 	const [appIsLoaded, setAppIsLoaded] = useState(false)
 
 	useEffect(() => {
