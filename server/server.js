@@ -18,7 +18,7 @@ server.once('error', (e) => {
 server.once('listening', function () { server.close() })
 // if the server is closed which means we know the right port now then start the actual application
 server.once('close', function () {
-	require("dotenv").config(".env")
+	require("dotenv").config()
 	const mongoose = require('mongoose');
 	const cookieSession = require('cookie-session');
 	const bodyParser = require('body-parser');

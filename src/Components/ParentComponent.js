@@ -14,7 +14,7 @@ const ParentComponent = ({ children }) => {
 	const pathName = useLocation().pathname
 	const navigate = useNavigate()
 	const authApi = axios.create({
-		baseURL: "http://localhost:9000/",
+		baseURL: process.env.SERVER_URL,
 		withCredentials: true,
 	})
 	const [user, setUser] = useState(null)
