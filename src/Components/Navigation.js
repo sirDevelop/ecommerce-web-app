@@ -135,7 +135,7 @@ const Navigation = () => {
 								as={Link}
 								to="http://localhost:9000/auth/google/callback"
 								variant="outline-info"
-								// onClick={() => {
+								// onClick={() => {req.user
 								// 	window.open(
 								// 		`http://localhost:9000/auth/google/callback`,
 								// 		"_self"
