@@ -3,7 +3,7 @@ require("dotenv").config()
 
 const connectDB = async () => {
 	try {
-		const connString = 'mongodb+srv://'+process.env.MONGO_DB_USERNAME+':' + process.env.MONGO_DB_PASSWORD + '@ecommerce.usa3wre.mongodb.net/'
+		const connString = process.env.mongoURI
 		// console.log(connString)
 		const conn = await mongoose.connect(connString)
 		console.log(`MongoDB connected`)
